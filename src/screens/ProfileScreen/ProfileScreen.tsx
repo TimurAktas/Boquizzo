@@ -2,10 +2,10 @@ import React, {} from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 
-export const LoginScreen: React.FC = () => {
+export const ProfileScreen: React.FC = () => {
     return (
         <View style={style.viewStyle}>
-            <Text>Login</Text>
+            <Text>Profile</Text>
         </View>
     );
 };

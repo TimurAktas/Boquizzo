@@ -1,12 +1,10 @@
 import * as React from 'react';
-import { LoginScreen } from './src/screens/LoginScreen/LoginScreen';
-
+import { MainStackNavigation } from './src/navigation/MainStackNavigation';
 
 function App() {
   return (
-      <LoginScreen />
+      <MainStackNavigation />
   );
 }
 
 export default App;
-
