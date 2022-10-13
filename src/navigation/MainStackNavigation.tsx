@@ -1,11 +1,12 @@
+import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
-import React from 'react';
 import { HomeScreen } from '../screens/HomeScreen/HomeScreen';
 import { ProfileScreen } from '../screens/ProfileScreen/ProfileScreen';
+import { HomeScreenStack, HomeStackParams } from './HomeStackNavigation/HomeStackNavigation';
 
 export type BottomTabParams = {
-    Home: undefined;
+    Home: HomeStackParams;
     Profile: undefined;
 };
 
@@ -17,17 +18,17 @@ export const MainStackNavigation: React.FC = () => {
             <BottomTab.Navigator> 
                 <BottomTab.Screen
                     name="Home"
-                    component={HomeScreen}
+                    component={HomeScreenStack}
                     options={{
-
-                    }}
+                        headerShown: false,
+                    }} 
                 />
                 <BottomTab.Screen
                     name="Profile"
                     component={ProfileScreen}
                     options={{
-
-                    }}
+                        headerShown: false,
+                    }} 
                 />
             </BottomTab.Navigator>
         </NavigationContainer>
