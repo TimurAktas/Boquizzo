@@ -11,5 +11,5 @@ export const ProfileScreen: React.FC = () => {
 };
 
 const style = StyleSheet.create({
-    viewStyle: { flex: 1, alignItems: 'center', justifyContent:'center',backgroundColor: 'gray' },
+    viewStyle: { flex: 1, alignItems: 'center', justifyContent:'center',backgroundColor: 'lightgray' },
 });
