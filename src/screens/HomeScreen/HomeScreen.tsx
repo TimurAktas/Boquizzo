@@ -1,10 +1,23 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Badge, Box, HStack, Pressable, Text, Image } from 'native-base';
-import React, {} from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { HomeStackParams } from '../../navigation/HomeStackNavigation/HomeStackNavigation';
+import { getAllQuizzes } from '../../redux/quiz/quiz.action';
+import { AppDispatch } from '../../redux/store';
 
 export const HomeScreen: React.FC = () => {
+    const dispatch: AppDispatch = useDispatch();
+    
+    useEffect(() => {
+        //Muss noch verschoben werden und andere Get Requests
+        const getQuizzes = async () => {
+            await dispatch(getAllQuizzes())
+        }
+        getQuizzes();
+    }, [])
+
     const navigation = useNavigation<NativeStackNavigationProp<HomeStackParams>>();
     const hsboLogo = require('../../assets/img/hsbologo.png');
     return (
