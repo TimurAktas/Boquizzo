@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { HomeScreen } from '../screens/HomeScreen/HomeScreen';
 import { ProfileScreen } from '../screens/ProfileScreen/ProfileScreen';
 import { HomeScreenStack, HomeStackParams } from './HomeStackNavigation/HomeStackNavigation';
+import { AddIcon } from 'native-base';
 
 export type BottomTabParams = {
     Home: HomeStackParams;
@@ -21,6 +22,9 @@ export const MainStackNavigation: React.FC = () => {
                     component={HomeScreenStack}
                     options={{
                         headerShown: false,
+                        tabBarIcon: ({ color }) => (
+                            <AddIcon size="5" mt="0.5" color="black" />
+                        ),
                     }} 
                 />
                 <BottomTab.Screen
@@ -28,7 +32,11 @@ export const MainStackNavigation: React.FC = () => {
                     component={ProfileScreen}
                     options={{
                         headerShown: false,
+                        tabBarIcon: ({ color }) => (
+                            <AddIcon size="5" mt="0.5" color="black" />
+                          ),
                     }} 
+                    
                 />
             </BottomTab.Navigator>
         </NavigationContainer>

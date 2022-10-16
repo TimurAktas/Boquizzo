@@ -22,14 +22,14 @@ export const HomeScreenStack: React.FC = () => {
             <HomeStack.Screen 
                 name="QuizroomScreen" 
                 options={{
-                    headerShown: false,
+                    title:'Quiz beitreten',
                     animation: 'fade'
                 }} 
                 component={QuizroomScreen} />
             <HomeStack.Screen 
                 name="QuizCreatorScreen" 
                 options={{
-                    headerShown: false,
+                    title:'Neues Quiz erstellen',
                     animation: 'fade'
                 }} 
                 component={QuizCreatorScreen}/>

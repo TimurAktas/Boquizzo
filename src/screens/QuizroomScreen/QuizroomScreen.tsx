@@ -1,21 +1,21 @@
-import { Box, CheckIcon, HStack, Pressable,Text, VStack } from 'native-base';
+import { Box, Pressable, Text, VStack } from 'native-base';
 import React, {} from 'react';
 import { StyleSheet, View } from 'react-native';
 
 
 export const QuizroomScreen: React.FC = () => {
     return (
-        <View style={style.viewStyle}>
-           <Box w={'80%'} h={240} borderColor={'black'} borderWidth={1}></Box>
+        <Box style={style.viewStyle} backgroundColor="primary.50">
+           <Box w={'80%'} h={240} borderColor={'black'} borderWidth={1} marginTop={10}></Box>
             
 
             <VStack w={'100%'} marginTop={10} alignItems={'center'} justifyContent={'center'} >
-                <Text fontSize={20}>Quiz Gefunden!</Text>
+                <Text fontSize={20} color={'black'}>Quiz Gefunden!</Text>
 
-                <VStack w={'80%'} backgroundColor={'white'} alignItems={'center'} padding={4} borderRadius={10}>
-                    <Text>Titel des Quiz</Text>
-                    <Text>Teilnehmerzahl: 25,</Text>
-                    <Text>Ersteller: Timur Aktas</Text>
+                <VStack w={'80%'} backgroundColor={'white'} alignItems={'center'} shadow={6} padding={4} borderRadius={10}>
+                    <Text color={'black'}>Titel des Quiz</Text>
+                    <Text color={'black'}>Teilnehmerzahl: 25,</Text>
+                    <Text color={'black'}>Ersteller: Timur Aktas</Text>
                
                     <Pressable w={'100%'} onPressOut={() => console.log('blabla')}> 
                         {({ isHovered, isPressed}) => { 
@@ -28,10 +28,10 @@ export const QuizroomScreen: React.FC = () => {
                     </Pressable>
                 </VStack>
             </VStack>
-        </View>
+        </Box>
     );
 };
 
 const style = StyleSheet.create({
-    viewStyle: { flex: 1, alignItems: 'center', justifyContent:'center',backgroundColor: 'lightgray' },
+    viewStyle: { flex: 1, alignItems:'center' },
 });
