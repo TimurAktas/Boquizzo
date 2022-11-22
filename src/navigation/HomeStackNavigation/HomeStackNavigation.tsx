@@ -1,17 +1,24 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createNativeStackNavigator, NativeStackNavigationOptions } from '@react-navigation/native-stack';
 import { QuizroomScreen } from '../../screens/QuizroomScreen/QuizroomScreen';
 import { HomeScreen } from '../../screens/HomeScreen/HomeScreen';
-import { QuizCreatorScreen } from '../../screens/QuizCreatorScreen/QuizCreatorScreen';
+import { socket } from '../../utils/Socket';
+import { EntryQuizroomScreen } from '../../screens/EntryQuizRoomScreen/EntryQuizRoomScreen';
 
 export type HomeStackParams = {
     HomeScreen: undefined;
-    QuizroomScreen: undefined;
-    QuizCreatorScreen: undefined;
+    QuizroomScreen: any; //TODO: Hab alles versucht und nichts hat geklappt -> {quizId:string}
+    EntryQuizRoomScreen: undefined;
 };
 const HomeStack = createNativeStackNavigator<HomeStackParams>();
 
 export const HomeScreenStack: React.FC = () => {
+
+    useEffect(() => {
+        socket
+        
+    },[])
+    
     return (
         <HomeStack.Navigator>
             <HomeStack.Screen 
@@ -22,17 +29,17 @@ export const HomeScreenStack: React.FC = () => {
             <HomeStack.Screen 
                 name="QuizroomScreen" 
                 options={{
+                    title:'Quiz Room',
+                    animation: 'fade'
+                }}
+                component={QuizroomScreen} />
+             <HomeStack.Screen 
+                name="EntryQuizRoomScreen" 
+                options={{
                     title:'Quiz beitreten',
                     animation: 'fade'
                 }} 
-                component={QuizroomScreen} />
-            <HomeStack.Screen 
-                name="QuizCreatorScreen" 
-                options={{
-                    title:'Neues Quiz erstellen',
-                    animation: 'fade'
-                }} 
-                component={QuizCreatorScreen}/>
+                component={EntryQuizroomScreen} />
         </HomeStack.Navigator>
     );
 };

@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { getAllQuizzes } from './quiz.action';
-import { QuizState, QuizzesType } from './quiz.types';
+import { getAllQuizzes, getQuizData } from './quiz.action';
+import { QuizState } from './quiz.types';
 
 const initialState: QuizState = {
     data: undefined,
@@ -14,6 +14,9 @@ export const quizSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder.addCase(getAllQuizzes.fulfilled, (state, action) => {
+            state.data = action.payload;
+        });
+        builder.addCase(getQuizData.fulfilled, (state, action) => {
             state.data = action.payload;
         });
     },

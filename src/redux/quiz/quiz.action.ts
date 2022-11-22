@@ -18,3 +18,15 @@ export const getAllQuizzes = createAsyncThunk('quiz/getAllQuizzes', async () => 
 
     return Promise.reject();
 })
+
+
+export const getQuizData = createAsyncThunk('quiz/getQuizData', async (quizId:String, thunkApi) => {
+    try{
+        const response = await fetch('http://localhost:3001/api/quizzes/'+quizId);
+        const json = await response.json();
+        return json;
+    }
+    catch(error: any){
+        console.warn('Error in getQuizData', error.response)
+    }
+})
