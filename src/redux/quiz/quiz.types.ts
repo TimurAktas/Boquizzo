@@ -1,12 +1,12 @@
 import { BaseSliceState } from '../base.types';
-
+import { UserType } from '../user/user.types';
 
 export type QuizType = {
     _id: number,
-    participants: number,
+    participants: UserType[],
     active: boolean,
     creatorId: string,
-    quizId: number,
+    quizId: string,
     questions: QuizzieType[],
 }  
 

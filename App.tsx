@@ -8,14 +8,17 @@ import { ProfileScreen } from './src/screens/ProfileScreen/ProfileScreen';
 import { extendTheme, NativeBaseProvider } from "native-base";
 import { MainStackNavigation } from './src/navigation/MainStackNavigation';
 import { Provider } from 'react-redux';
-import { store } from './src/redux/store';
+import { persistor, store } from './src/redux/store';
+import { PersistGate } from 'redux-persist/integration/react';
 
 const BottomTab = createBottomTabNavigator();
 function App() {
   return (
     <NativeBaseProvider theme={theme}>
       <Provider store={store}>
-        <MainStackNavigation/>
+        <PersistGate loading={null} persistor={persistor}>
+          <MainStackNavigation/>
+        </PersistGate>
       </Provider>
     </NativeBaseProvider>
   );

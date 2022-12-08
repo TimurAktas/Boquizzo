@@ -7,5 +7,5 @@ socket.on('connect', async () => {
     console.log("Erfolgreich mit Socket server verbunden. ")
 
     //TODO: QuizID = QRCODE oder Input
-
 });
+

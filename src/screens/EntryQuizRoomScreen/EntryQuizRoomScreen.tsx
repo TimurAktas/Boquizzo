@@ -1,42 +1,46 @@
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Box, Pressable, Text, VStack } from 'native-base';
-import React, {} from 'react';
-import { StyleSheet, View } from 'react-native';
-import { HomeStackParams } from '../../navigation/HomeStackNavigation/HomeStackNavigation';
-
+import { Box, Input, Text } from 'native-base';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { QuizCard } from '../../components/QuizCard/QuizCard';
+import { getQuizData } from '../../redux/quiz/quiz.action';
+import { QuizType } from '../../redux/quiz/quiz.types';
+import { AppDispatch } from '../../redux/store';
 
 export const EntryQuizroomScreen: React.FC = () => {
-    const navigation = useNavigation<NativeStackNavigationProp<HomeStackParams>>();
+    const [errorMessage, setErrorMessage] = useState(String)
+    const [quizFound, setQuizFound] = useState(false)
+    const [foundQuizData, setFoundQuizData] = useState({})
+    const dispatch: AppDispatch = useDispatch();
+    
+    const handleChange = (quizId:string) => {
+        if(quizId.length == 6){
+            dispatch(getQuizData(quizId)).then((data) => {
+                if(data.payload){
+                    console.log("found quiz: ", data.payload)
+                    setQuizFound(true)
+                    setErrorMessage('')
+                    setFoundQuizData(data.payload)
+                }else{
+                    setErrorMessage("Kein Quiz mit dieser ID gefunden!")
+                }
+            })
+        }else{
+           setErrorMessage("ID muss 6 zahlen haben")
+           setQuizFound(false)
+        }
+        
+    };
 
     return (
-        <Box style={style.viewStyle} backgroundColor="primary.50">
-           <Box w={'80%'} h={240} borderColor={'black'} borderWidth={1} marginTop={10}></Box>
-            
+        <Box flex={1} alignItems={'center'} backgroundColor="primary.50">
+           <Box margin={8}>
+                <Text fontSize={16} color={'black'}>Gib den 6-stelligen Code ein um beizutreten</Text>
+                <Text fontSize={12} color={'gray.700'} marginLeft={6}>Den Code findest du auf dem Bildschirm vor dir</Text>
+                <Input marginTop={2} placeholder="Input" w="100%" onChangeText={handleChange} color={'black'}/>
+                {errorMessage && <Text fontSize={12} marginTop={2} color={'red.600'}>{errorMessage}</Text> }
+            </Box>
 
-            <VStack w={'100%'} marginTop={10} alignItems={'center'} justifyContent={'center'} >
-                <Text fontSize={20} color={'black'}>Quiz Gefunden!</Text>
-
-                <VStack w={'80%'} backgroundColor={'white'} alignItems={'center'} shadow={6} padding={4} borderRadius={10}>
-                    <Text color={'black'}>Titel des Quiz</Text>
-                    <Text color={'black'}>Teilnehmerzahl: 25,</Text>
-                    <Text color={'black'}>Ersteller: Timur Aktas</Text>
-               
-                    <Pressable w={'100%'} onPressOut={() => navigation.navigate('QuizroomScreen',{quizId: '398072'})}> 
-                        {({ isHovered, isPressed}) => { 
-                            return <Box bg={isPressed ? "red.800" : isHovered ? "red.800" : "red.700"} style={{ transform: [{ scale: isPressed ? 0.96 : 1}] }} p="5" rounded="8" shadow={3} borderWidth="1" borderColor="coolGray.300" justifyContent={'center'} alignItems= {'center'}>
-                            <Text color="white" fontWeight="medium">
-                                Quiz beitreten
-                            </Text>
-                            </Box>
-                        }}
-                    </Pressable>
-                </VStack>
-            </VStack>
+           {quizFound && <QuizCard _id={0} participants={foundQuizData.participants} active={foundQuizData.active} creatorId={foundQuizData.creatorId} quizId={foundQuizData.quizId} questions={[]}></QuizCard>}
         </Box>
     );
 };
-
-const style = StyleSheet.create({
-    viewStyle: { flex: 1, alignItems:'center' },
-});

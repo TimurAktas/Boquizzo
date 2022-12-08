@@ -2,19 +2,23 @@ import { Box, HStack, Stack, VStack,Text, ScrollView} from 'native-base';
 import React, {} from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Avatar } from "native-base";
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
 
 export const ProfileScreen: React.FC = () => {
+    const user = useSelector((state: RootState) => state.user.data);
+
     return (
         <Box style={style.viewStyle} backgroundColor="primary.50">
-            <HStack width={'100%'} backgroundColor="white" shadow={7} padding={4} justifyContent='space-between'>
-                <HStack>
+            <HStack paddingTop={12} width={'100%'} backgroundColor="white" shadow={7} padding={4} justifyContent='space-between'>
+                <HStack> 
                     <Avatar bg="green.500" size="md" source={{ uri: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80"}}>
                         AJ
                     </Avatar>
                 
                     <VStack marginLeft={2}>
-                        <Text color={'black'}>Name Nachname</Text>
-                        <Text color={'gray.500'} fontSize={12}>Studiengang</Text>
+                        <Text color={'black'} fontSize={18}>{user?.name} {user?.surname}</Text>
+                        <Text color={'gray.500'} fontSize={16}>{user?.uni}</Text>
                     </VStack>
                 </HStack>
 
@@ -27,11 +31,6 @@ export const ProfileScreen: React.FC = () => {
 
             <Text color={'black'} bold fontSize={14} margin={4}>Abgeschlossene Quiz's</Text>
             <ScrollView marginLeft={4} marginRight={4} showsVerticalScrollIndicator={false}> 
-                <HStack h={140} width={'100%'} backgroundColor='gray.300' marginTop={4} borderRadius={20}></HStack>
-                <HStack h={140} width={'100%'} backgroundColor='gray.300' marginTop={4} borderRadius={20}></HStack>
-                <HStack h={140} width={'100%'} backgroundColor='gray.300' marginTop={4} borderRadius={20}></HStack>
-                <HStack h={140} width={'100%'} backgroundColor='gray.300' marginTop={4} borderRadius={20}></HStack>
-                <HStack h={140} width={'100%'} backgroundColor='gray.300' marginTop={4} borderRadius={20}></HStack>
                 <HStack h={140} width={'100%'} backgroundColor='gray.300' marginTop={4} borderRadius={20}></HStack>
                 <HStack h={140} width={'100%'} backgroundColor='gray.300' marginTop={4} borderRadius={20}></HStack>
             </ScrollView>
