@@ -20,6 +20,7 @@ export const LoginScreen: React.FC = () => {
     }
 
     const loginUser = async () => {
+        console.log("bin hier drin")
         await dispatch(authUser({matrikelnummer: matrikelnummer, password: password}))
     } 
 
@@ -34,7 +35,7 @@ export const LoginScreen: React.FC = () => {
                 <Input marginTop={2} placeholder="Passwort" w="80%" onChangeText={onChangePassword} color={'black'}/>
             </Box>
 
-            <Pressable maxW="96" w={'70%'} marginTop={10} onPressOut={loginUser}> 
+            <Pressable maxW="96" w={'70%'} marginTop={10} onPress={loginUser}> 
                 {({ isHovered, isFocused, isPressed}) => { 
                     return <Box bg={isPressed ? "red.800" : isHovered ? "red.800" : "red.700"} style={{ transform: [{ scale: isPressed ? 0.96 : 1}] }} p="5" rounded="8" shadow={3} borderWidth="1" borderColor="coolGray.300" justifyContent={'center'} alignItems= {'center'}>
                     <Text color="white" fontWeight="medium">

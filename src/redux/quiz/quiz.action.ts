@@ -6,6 +6,7 @@ export const getQuizData = createAsyncThunk('quiz/getQuizData', async (quizId:St
     try{
         const response = await fetch('http://localhost:3001/api/quizzes/'+quizId);
         const json = await response.json();
+        console.log("JSON: ",json)
         if(json) return json;
     }
     catch(error: any){

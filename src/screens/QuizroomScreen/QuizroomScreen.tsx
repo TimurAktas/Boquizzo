@@ -1,4 +1,4 @@
-import { Badge, Box, Flex, HStack, Pressable, ScrollView, Spacer, Text, VStack } from 'native-base';
+import { Avatar, Badge, Box, CheckIcon, ChevronLeftIcon, CircleIcon, Flex, HStack, Icon, Modal, MoonIcon, Pressable, ScrollView, Spacer, Text, VStack, WarningOutlineIcon } from 'native-base';
 import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
@@ -6,51 +6,133 @@ import { getQuizData } from '../../redux/quiz/quiz.action';
 import { AppDispatch, RootState } from '../../redux/store';
 import { socket } from '../../utils/Socket';
 import {AppState} from 'react-native'
-import { OptionType } from '../../redux/quiz/quiz.types';
+import { LeaderBoardType, OptionType } from '../../redux/quiz/quiz.types';
+import Lottie from 'lottie-react-native';
+import LottieView from 'lottie-react-native';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { HomeStackParams } from '../../navigation/HomeStackNavigation/HomeStackNavigation';
 
 export const QuizroomScreen: React.FC = ({ route }:any) => {
+    const navigation = useNavigation<NativeStackNavigationProp<HomeStackParams>>();
+
     const quizId: string =  route.params.quizId
     const dispatch: AppDispatch = useDispatch();
+    
     const quizData = useSelector((state: RootState) => state.quiz.data);
     const user = useSelector((state: RootState) => state.user.data);
     const [questionIndex, setQuestionIndex] = useState(0)
     const [optionVergleich, setOptionVergleich ] = useState(Number)
     const appState = useRef(AppState.currentState);
+    const [secondsToAnswer, setSecondsToAnswer] = useState(0)
+    const [quizStarted, setQuizStarted] = useState(false)
+    const [participants, setParticipants] = useState([])
+    const catAvatar = require('../../assets/img/illustration/catAvatar.jpg');
 
+    const [resolveAnswers, setResolveAnswers] = useState(false)
+    const [questionResolve, setQuestionResolve] = useState(false)
+
+    const [leaderBoard, setLeaderBoard] = useState<LeaderBoardType[]>([])
+
+    const [questionResolveMessage, setQuestionResolveMessage] = useState(false)
+    const [questionResolveMessageWrong, setQuestionResolveMessageWrong] = useState(false)
+    const cancelRef = useRef(null);
+
+
+    const [modalOpen, setModalOpen] = useState(false)
+
+    const handleOpen = () => setModalOpen(true);
+    const handleClose = () => setModalOpen(false);
+  
 
     useEffect(() => {
+        // Ist das Quiz schon rum? Dann navigiere weiter auf die Hall of Fame ansonsten starte das Quiz
+        if(quizData?.isOver){
+            navigation.replace('HallOfFameScreen',{quizId: quizData?.quizId})
+        }else{
+
         if(quizId) {
             getQuizDataAndRefreshState()
+            setSecondsToAnswer(quizData?.questions[questionIndex]?.secondsToAnswer)
             // emitter
+            
             socket.emit("joinRoom", {quizId: quizId, userId: user?.matrikelnummer})
 
             // listener
             socket.on('changedPage', (data)=> {
+                setResolveAnswers(false)
                 setOptionVergleich(null)
                 console.log("changed Page")
                 setQuestionIndex(data.newIndex)
                 console.log(data.newQuiz.questions[data.newIndex].userAnswers)
             })
-
-            socket.on("givedAnswer", data => {
-                console.log("dahsdhasdhadhsh")
-            })
-
-            socket.on('sendtoEveryOne', (data) => {
-                console.log(`Send to everyoneeee!!!`)
-            });
-
+            
             socket.on('leavedRoom', (data) => {
                 console.log("user has leaved the Room: ", data.userId)
             })
 
+            socket.on('startedQuiz', (data) => {
+                setQuizStarted(true)
+            })
+
+            socket.on('timerSeconds', (data) => {
+                console.log("Zeit zum antworten", data.secondsToAnswer)
+                setSecondsToAnswer(data.secondsToAnswer)
+            })
+
+            socket.on('resolvedQuestion', (data) => {
+                console.log("Resolved Question: ", data)
+                setResolveAnswers(true)
+
+                setLeaderBoard(data.leaderBoard)
+                
+                setTimeout(() => {
+
+                    //Check ob man unten den Usern ist die Richtig waren
+                    data.correctUsers?.map(correctUser => {
+                        if(correctUser == user.matrikelnummer){
+                            setQuestionResolveMessage(true)
+
+                            setTimeout(() => {
+                                setQuestionResolveMessage(false)
+                            }, 5000)
+                        }
+                    })
+
+                    //Check ob man unten den Usern ist die Falsch waren
+                    data.wrongUsers?.map(wrongUser => {
+                        if(wrongUser == user.matrikelnummer){
+                            console.log("Schade! Du hast die Frage falsch beantwortet :(")
+                            setQuestionResolveMessageWrong(true)
+
+                            setTimeout(() => {
+                                setQuestionResolveMessageWrong(false)
+                            }, 5000)
+                        }
+                    })
+                }, 5000)
+
+
+                setTimeout(() => {
+                    setQuestionResolve(true)
+                }, 5000)
+             
+            })
+
             socket.on('joinedRoom', (data) => {
                 console.log("Joined Room", data.userId)
+                console.log("Participants: ", data.participants)
+                setParticipants(data.participants)
+                setLeaderBoard(data.leaderBoard)
+            })
+
+            socket.on('endedQuiz', (data) => {
+                navigation.navigate('HallOfFameScreen',{quizId: data.quizId})
             })
 
         }
         else console.log("Keine Gültige ID")
-
+    }
         return () => {
           // Wenn Seite geschlossen wird - alle listener aus
           socket.off('changedPage');
@@ -83,6 +165,8 @@ export const QuizroomScreen: React.FC = ({ route }:any) => {
         dispatch(getQuizData(quizId)).then((data) => {
             console.log(data.payload)
             setQuestionIndex(data.payload.currentPageIndex)
+            setQuizStarted(data.payload.startedQuiz)
+            setLeaderBoard(data.payload.leaderboard)
         })
 
     })
@@ -121,26 +205,51 @@ export const QuizroomScreen: React.FC = ({ route }:any) => {
     }
 
     return (
-        <Box style={style.viewStyle} backgroundColor="primary.50">
-            <VStack w={'100%'} marginTop={4} alignItems={'center'} justifyContent={'center'} >
-                <HStack height={10} width={'100%'} padding={2} justifyContent={'space-between'}>
-                    {quizData && <Text color={'black'} fontSize={16}>Frage {questionIndex+1}/{quizData.questions.length}</Text>}
-                    <Text color={'black'} bold fontSize={16}>Leaderboard anzeigen</Text>
-                </HStack>
-                
-                {quizData && <Text color={'black'} alignSelf={'flex-end'} fontSize={16} marginRight={2}>{quizData.participants.length} Teilnehmer</Text>}
+        <Box style={style.viewStyle} backgroundColor="gray.200">
+            {quizData?.isOver ? <Box></Box>: <Box  style={style.viewStyle} w={'100%'} backgroundColor="gray.200">
+            <Box /* Top Bar */ height={40} w={'100%'} backgroundColor={'red.700'} borderBottomRadius={30}>        
+                <Pressable marginLeft={4} marginTop={16} height={10} onPress={() => navigation.goBack()}> 
+                    <HStack  alignItems={'center'} >
+                        <Box backgroundColor={'rgba(255,255,255, 0.6)'} borderRadius={20} w={8} h={8} marginTop={2} alignItems={'center'} justifyContent={'center'}>
+                            <ChevronLeftIcon  size="5" color="red.700" />
+                        </Box>
+                        {quizStarted ? 
+                            <Box>
+                                <Text fontSize={20} marginLeft={4} bold>{quizData.title}</Text>
+                            </Box> 
+                        : 
+                            <Box>
+                                <Text fontSize={30} marginLeft={4} bold>Warte Raum</Text>
+                            </Box>
+                        }
+                    </HStack>
+                </Pressable>
 
-                {quizData && <Text color={'black'} fontSize={20} bold marginBottom={2} margin={6}>{quizData?.questions[questionIndex]?.question} </Text>}
+                {quizStarted && <HStack margin={6} marginTop={6} justifyContent={'space-between'}>
+                        {quizData && <Text color={'white'} alignSelf={'flex-end'} marginRight={2} bold>{participants.length} Teilnehmer</Text>}
+                        <HStack alignItems={'center'} justifyContent={'space-around'}>  
+                            <WarningOutlineIcon size="4" color="white" />
+                            <Text color={'white'} marginLeft={2} bold onPress={handleOpen}>{secondsToAnswer}</Text>
+                        </HStack>
+                        <Text color={'white'} bold onPress={handleOpen}>Leaderboard</Text>
+                    </HStack>}
+            </Box>
+
+
+            {quizStarted ? 
+            // Quiz Room
+            <VStack w={'100%'} alignItems={'center'} justifyContent={'center'}>
+                {quizData && <Text color={'black'} fontSize={20} bold margin={4} marginBottom={2} marginTop={10}>{quizData?.questions[questionIndex]?.question} <Text fontWeight={'light'} fontSize={14}>Frage {questionIndex+1}/{quizData.questions.length}</Text> </Text>}
 
                 <ScrollView>
-                    {quizData?.questions[questionIndex]?.options.map((option,i)=> {                 
+                    {resolveAnswers && quizData?.questions[questionIndex]?.options.map((option,i)=> {                 
                         return (
-                            <Pressable onPress={() => sendAnswerToServer(option)} key={ Math.random()}>{({ isHovered, isFocused, isPressed }) => {
-                                return <HStack bg={optionVergleich == option.index ? 'blue.500':'white.200'}  style={{transform: [{scale: isPressed ? 0.96 : 1}], borderWidth:1,borderColor:'gray'}} rounded='20' borderColor="coolGray.300" marginTop={5} w={300} padding={4}> 
-                                            <Text color={optionVergleich == option.index ? 'white':"coolGray.500"} fontWeight="medium" fontSize="xl">
+                            <Pressable key={ Math.random()}>{({isPressed }) => {
+                                return <HStack bg={option.isRightAnswer && resolveAnswers ?'green.600': !option.isRightAnswer && resolveAnswers ? 'red.500':''}  style={{transform: [{scale: isPressed ? 0.96 : 1}], borderWidth:1}} rounded='20' borderColor={option.isRightAnswer && resolveAnswers ?'green.600': !option.isRightAnswer && resolveAnswers ? 'red.500':''} marginTop={5} w={300} padding={4}> 
+                                            <Text color={option.isRightAnswer && resolveAnswers ?'white': !option.isRightAnswer && resolveAnswers ? 'white':'gray'} fontWeight="medium" fontSize="xl">
                                                 {getLetter(option.index)}: 
                                             </Text>
-                                            <Text style={{marginLeft:'auto',marginRight:'auto'}} color={optionVergleich == option.index ? 'white':"coolGray.500"} fontWeight="medium" fontSize="xl">
+                                            <Text style={{marginLeft:'auto',marginRight:'auto'}} color={option.isRightAnswer && resolveAnswers ?'white': !option.isRightAnswer && resolveAnswers ? 'white':'gray'} fontWeight="medium" fontSize="xl">
                                                 {option.value}
                                             </Text>
                                         </HStack>
@@ -149,9 +258,98 @@ export const QuizroomScreen: React.FC = ({ route }:any) => {
                             </Pressable>
                         )
                     })}
+
+                    {!resolveAnswers && quizData?.questions[questionIndex]?.options.map((option,i)=> {                 
+                        return (
+                            <Pressable onPress={() => sendAnswerToServer(option)} key={ Math.random()}>{({ isHovered, isFocused, isPressed }) => {
+                                return <HStack bg={optionVergleich == option.index ? '#B91C1B':''}  style={{transform: [{scale: isPressed ? 0.96 : 1}], borderWidth:2, borderColor:'#B91C1B'}} rounded='20' borderColor="red.700" marginTop={5} w={300} padding={4}> 
+                                    <Text color={optionVergleich == option.index ? 'white':"black"} fontWeight="medium" fontSize="xl">
+                                        {getLetter(option.index)}: 
+                                    </Text>
+                                    <Text style={{marginLeft:'auto',marginRight:'auto'}} color={optionVergleich == option.index ? 'white':"black"} fontWeight="medium" fontSize="xl">
+                                        {option.value}
+                                    </Text>
+                                </HStack>
+                                }}
+                            </Pressable>
+                        )
+                    })}
                 </ScrollView>
             </VStack>
+            : 
+                // Waiting Room
+                <Box w={'90%'} margin={4} marginTop={10}>
+                    
+                    <Box>
+                        <Text color={'black'} fontSize={20} bold>{quizData.title}</Text>
+                        <Text color={'black'} marginTop={2}>In diesem Quiz gibt es {quizData.questions.length} Fragen</Text>
+                    </Box>
 
+                    <Box /*TrennWand*/ h={.4} w={'100%'} backgroundColor={'gray.400'} marginLeft={'auto'} marginRight={'auto'} marginTop={4} marginBottom={4}></Box>
+
+
+                    <Box>
+                        <Text color={'black'} fontSize={20} bold>Hallo {user.name},</Text>
+                        <Text marginTop={2} color={'black'}>Das Quiz wurde noch nicht gestartet und du befindest dich im Warteraum. Warte darauf, dass der Dozent das Quiz startet. Sobald das Quiz los geht, läuft der Timer zum antworten, also sei schnell!</Text>
+                    </Box>
+
+                    <Box /*TrennWand*/ h={.4} w={'100%'} backgroundColor={'gray.400'} marginLeft={'auto'} marginRight={'auto'} marginTop={4} marginBottom={4}></Box>
+
+                    <Text color={'black'} fontSize={20} bold marginBottom={4}>{participants.length} Teilnehmer</Text>
+                    <ScrollView>
+                        <HStack style={{flexWrap: 'wrap',}}>                  
+                            {participants.map((participant,i)=> {                 
+                                return (
+                                    <Box key={i} style={{marginRight:5, width:80, justifyContent:'center', alignItems:'center'}}>
+                                        <Avatar bg="green.500" source={catAvatar}></Avatar>
+                                        <Text color={'black'}>{participant}</Text>
+                                    </Box>
+                                )
+                            })}
+                        </HStack>
+                    </ScrollView>
+                </Box>
+            }
+
+            <Modal isOpen={questionResolveMessage} size={'md'}>
+                <LottieView source={require('../../assets/animations/coinAnimation.json')} autoPlay loop speed={0.5} />
+                <Box marginTop={40} backgroundColor={'gray.300'} borderRadius={10} padding={2}>
+                    <Text fontSize={16} color={'black'} bold>Hurra! Du hast die Frage richtig beantwortet!</Text>
+                    <Text fontSize={16} color={'black'} bold>Du erhälst 25 Punkte</Text>
+                </Box>
+            </Modal>
+
+            <Modal isOpen={questionResolveMessageWrong} size={'md'}>
+                <Box height={300} width={300}>
+                    <LottieView source={require('../../assets/animations/cryMorty.json')}  autoPlay loop speed={0.5} />
+                </Box>
+                <Box backgroundColor={'gray.300'} borderRadius={10} padding={2}>
+                    <Text fontSize={16} color={'black'} bold>Schade! Du hast die Frage falsch beantwortet :C</Text>
+                    <Text fontSize={16} color={'black'} bold>Für dich gibt es diesmal keine Punkte!</Text>
+                </Box>
+            </Modal>
+
+            <Modal isOpen={modalOpen} onClose={handleClose}>
+                <Box style={{backgroundColor:'white', width: '90%', borderRadius: 30, height: '70%'}}>
+                    <HStack textAlign={'center'} height={20} display={'flex'} alignItems={'center'} justifyContent={'space-around'}>
+                        <MoonIcon size="5" mt="0.5" color="red.600" />
+                        <Text color={'black'} fontSize={20} bold>Leaderboard</Text>
+                        <MoonIcon size="5" mt="0.5" color="red.600"  />
+                    </HStack>
+
+                    <Box height={1} width={'90%'} alignSelf={'center'}  borderBottomColor={'gray.400'} borderBottomWidth={.2}></Box>
+
+                    <ScrollView marginLeft={5} marginRight={5}>
+                        {leaderBoard.map((user, index) => {
+                            return <HStack justifyContent={'space-between'} marginTop={4}>
+                                <Text color={'black'}>{index+1}. {'        '} {user.userId}</Text>
+                                <Text color={'black'}>{user.points}</Text>
+                            </HStack>
+                        })}
+                    </ScrollView>
+                </Box>
+            </Modal>
+            </Box>} 
         </Box>
     );
 };
@@ -159,3 +357,5 @@ export const QuizroomScreen: React.FC = ({ route }:any) => {
 const style = StyleSheet.create({
     viewStyle: { flex: 1, alignItems:'center' },
 });
+
+

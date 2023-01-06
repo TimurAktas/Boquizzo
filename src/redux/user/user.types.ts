@@ -8,6 +8,7 @@ export type UserType = {
     accessToken: string
     semester: number
     uni:string
+    quizPoints: number
 };
 
 export type UserState = BaseSliceState<UserType | null>;

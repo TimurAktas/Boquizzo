@@ -4,9 +4,11 @@ import { QuizroomScreen } from '../../screens/QuizroomScreen/QuizroomScreen';
 import { HomeScreen } from '../../screens/HomeScreen/HomeScreen';
 import { socket } from '../../utils/Socket';
 import { EntryQuizroomScreen } from '../../screens/EntryQuizRoomScreen/EntryQuizRoomScreen';
+import { HallOfFameScreen } from '../../screens/HallOfFameScreen/HallOfFameScreen';
 
 export type HomeStackParams = {
     HomeScreen: undefined;
+    HallOfFameScreen: any;
     QuizroomScreen: any; //TODO: Hab alles versucht und nichts hat geklappt -> {quizId:string}
     EntryQuizRoomScreen: undefined;
 };
@@ -30,14 +32,24 @@ export const HomeScreenStack: React.FC = () => {
                 name="QuizroomScreen" 
                 options={{
                     title:'Quiz Room',
-                    animation: 'fade'
+                    animation: 'fade',
+                    headerShown: false 
                 }}
                 component={QuizroomScreen} />
+            <HomeStack.Screen 
+                name="HallOfFameScreen" 
+                options={{
+                    title:'Quiz Room',
+                    animation: 'fade',
+                    headerShown: false 
+                }}
+                component={HallOfFameScreen} />
              <HomeStack.Screen 
                 name="EntryQuizRoomScreen" 
                 options={{
                     title:'Quiz beitreten',
-                    animation: 'fade'
+                    animation: 'fade',
+                    headerShown: false 
                 }} 
                 component={EntryQuizroomScreen} />
         </HomeStack.Navigator>

@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import { Text, Box, Pressable, Badge, HStack } from "native-base";
+import { Text, Box, Pressable, Badge, HStack, CheckIcon, SunIcon } from "native-base";
 import { HomeStackParams } from "../../navigation/HomeStackNavigation/HomeStackNavigation";
 import { QuizType } from "../../redux/quiz/quiz.types";
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -11,27 +11,51 @@ export const ActiveQuizCard: React.FC = () => {
     const quizData = useSelector((state: RootState) => state.quiz.data);
 
     return (
-        <Pressable maxW="96" w={'90%'} marginTop={4} onPress={() => navigation.navigate('QuizroomScreen',{quizId: quizData?.quizId})}> 
-                {({ isHovered, isFocused, isPressed}) => { 
-                    return <Box bg={isPressed ? "coolGray.200" : isHovered ? "coolGray.200" : "coolGray.100"} style={{ transform: [{ scale: isPressed ? 0.96 : 1}] }} p="5" rounded="8" shadow={3} borderWidth="1" borderColor="coolGray.300">
-                    <HStack alignItems="center">
-                        <Badge colorScheme="green" _text={{ color: "white" }} variant="solid" rounded="4">
-                            Aktiv seit 25:30 min
-                        </Badge>
+        <Pressable w={'100%'} marginTop={4} onPress={() => navigation.navigate('QuizroomScreen',{quizId: quizData?.quizId})}> 
+            {({ isHovered, isFocused, isPressed}) => { 
+                return <Box bg={isPressed ? "coolGray.200" : isHovered ? "coolGray.200" : "coolGray.100"} style={{ transform: [{ scale: isPressed ? 0.96 : 1}] }} rounded="20" shadow={3}>
+                    
+                <Box backgroundColor={'red.700'} height={24} borderRadius={20} padding={4}>
+                    <HStack backgroundColor={'rgba(255,255,255, 0.6)'} maxW={24} borderRadius={30} padding={2} alignSelf={'flex-end'}>
+                        <SunIcon size="3" mt="0.5" color="black" />
+                        <Text color="black" fontSize={10}> 25:20 Min</Text>
+                    </HStack >
+
+                    <HStack marginTop={'auto'} marginBottom={'auto'}>
+                        <Text fontSize={16} bold>{quizData.title}</Text>
                     </HStack>
-                    <Text color="black" mt="3" fontWeight="medium" fontSize="xl">
-                        Quiz titel
-                    </Text>
-                        <HStack>
-                            <Text color="black">Teilnehmer: </Text>
-                            <Text color="black">{quizData?.participants?.length}</Text>
-                        </HStack>
-                        <HStack>
-                            <Text color="black">Frage</Text>
-                            <Text color="black">10/30</Text>
-                        </HStack>
-                    </Box>
-                }}
-            </Pressable>
+                
+                </Box>
+
+                <Box padding={4}>
+                    <HStack>
+                        <Text color="black">Quiz ID </Text>
+                        <Text color="black" bold> {quizData?.quizId}</Text>
+                    </HStack>
+
+                    <HStack justifyContent={'space-between'}>
+                        <Box>
+                            <HStack marginTop={2}>
+                                <Text color="black">Teilnehmer </Text>
+                                <Text color="black" bold> {quizData?.participants?.length}</Text>
+                            </HStack>
+
+                            <HStack marginTop={2}>
+                                <Text color="black">Frage </Text>
+                                <Text color="black" bold> 10/30</Text>
+                            </HStack>
+                        </Box>
+
+                        <Box backgroundColor={'red.700'} padding={2} borderRadius={20} w={32} h={10} marginTop={4}>
+                            <Text bold marginLeft={'auto'} marginRight={'auto'}>Beitreten</Text>
+                        </Box>
+
+                    </HStack>
+                </Box>
+
+
+            </Box>
+            }}
+        </Pressable>
       );
 };
