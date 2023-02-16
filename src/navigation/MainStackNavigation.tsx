@@ -8,6 +8,8 @@ import { AddIcon } from 'native-base';
 import { LoginScreen } from '../screens/LoginScreen/LoginScreen';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
+import { createStackNavigator } from '@react-navigation/stack';
+import { RegistrationScreen } from '../screens/RegistrationScreen/RegistrationScreen';
 
 export type BottomTabParams = {
     Home: HomeStackParams;
@@ -15,6 +17,14 @@ export type BottomTabParams = {
 };
 
 const BottomTab = createBottomTabNavigator<BottomTabParams>();
+
+
+export type LoginRegiTabParams = {
+    Login: undefined;
+    Registration: undefined;
+};
+
+const LoginRegiStack = createStackNavigator<LoginRegiTabParams>();
 
 export const MainStackNavigation: React.FC = () => {
     const accessToken = useSelector((state: RootState) => state.auth.data?.idToken);
@@ -45,7 +55,10 @@ export const MainStackNavigation: React.FC = () => {
                     />
                 </BottomTab.Navigator>
                 ) : (
-                    <LoginScreen />
+                    <LoginRegiStack.Navigator>
+                    <LoginRegiStack.Screen name="Login" component={LoginScreen}   options={{ headerShown: false }}   />
+                    <LoginRegiStack.Screen name="Registration" component={RegistrationScreen}   options={{ headerShown: false }}   />
+                  </LoginRegiStack.Navigator>
                 )}
         </NavigationContainer>
     );

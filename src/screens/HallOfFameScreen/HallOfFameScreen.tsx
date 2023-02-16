@@ -60,26 +60,26 @@ export const HallOfFameScreen: React.FC = ({ route }:any) => {
                             return <HStack alignItems={'center'} justifyContent={'space-between'}>
                                 <Image source={first} alt={'stImg'} height={16} width={16} marginTop={4} />
                                 <Text color={'black'} fontSize={18} bold>{user.userId}</Text>
-                                <Text color={'black'} fontSize={18} bold>2400 Punkte</Text>
+                                <Text color={'black'} fontSize={18} bold>{user.points} Punkte</Text>
                             </HStack>
                         }else if(index == 1){
                             return <HStack justifyContent={'space-between'} alignItems={'center'}>
                                 <Image source={second} alt={'ndImg'} height={16} width={16} marginTop={4} />
                                 <Text color={'black'} fontSize={18} bold>{user.userId}</Text>
-                                <Text color={'black'} fontSize={18} bold>1900 Punkte</Text>
+                                <Text color={'black'} fontSize={18} bold>{user.points} Punkte</Text>
                             </HStack>
                         }else{
                             return <HStack justifyContent={'space-between'} alignItems={'center'}>
                                 <Image source={third} alt={'rdImg'} height={16} width={16} marginTop={4} />
                                 <Text color={'black'} fontSize={18} bold>{user.userId}</Text>
-                                <Text color={'black'} fontSize={18} bold>1200 Punkte</Text>
+                                <Text color={'black'} fontSize={18} bold>{user.points} Punkte</Text>
                             </HStack>
                         }
                     }else{
                         return <HStack justifyContent={'space-between'} alignItems={'center'} marginTop={4}>
                             <Text color={'black'} marginLeft={6}>{index+1}. </Text>
                             <Text color={'black'} fontSize={18}>{user.userId}</Text>
-                            <Text color={'black'} fontSize={18}>1200 Punkte</Text>
+                            <Text color={'black'} fontSize={18}>{user.points} Punkte</Text>
                         </HStack>
                     }
                 })}

@@ -1,7 +1,8 @@
 import { BaseSliceState } from '../base.types';
 
 export type UserType = {
-    matrikelnummer: string,
+    id: string,
+    nickname: string,
     name: string,
     surname:string,
     password: string

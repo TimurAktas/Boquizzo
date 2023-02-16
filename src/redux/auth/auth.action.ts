@@ -1,9 +1,10 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import {API_URL} from '../../config/config'
 
-
-export const authUser = createAsyncThunk('auth/authUser', async (data:{matrikelnummer:string,password:string}, thunkApi) => {
+export const authUser = createAsyncThunk('auth/authUser', async (data:{nickname:string,password:string}, thunkApi) => {
     try{
+      console.log("login: ", data)
       const requestOptions = {
         method: 'POST',
         headers: {
@@ -11,11 +12,11 @@ export const authUser = createAsyncThunk('auth/authUser', async (data:{matrikeln
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({  
-          'matrikelnummer': data.matrikelnummer,
+          'nickname': data.nickname.toLocaleLowerCase(),
           'password': data.password.toLocaleLowerCase()
         })
       };
-      const response = await fetch('http://localhost:3001/auth/login', requestOptions);
+      const response = await fetch(`${API_URL}/auth/login`, requestOptions);
       
       console.log("response", response)
       const loginuser = await response.json();
@@ -34,7 +35,7 @@ export const authUser = createAsyncThunk('auth/authUser', async (data:{matrikeln
 
 export const logoutUser = createAsyncThunk('auth/logoutUser', async (_, thunkApi)  => {
     try{
-        localStorage.removeItem("user");
+        return null
     }
     catch(error: any){
         console.warn('Error in logout User', error.response)

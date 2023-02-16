@@ -12,6 +12,7 @@ import LottieView from 'lottie-react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { HomeStackParams } from '../../navigation/HomeStackNavigation/HomeStackNavigation';
+import { UserAvatar } from '../../components/UserAvatar/UserAvatar';
 
 export const QuizroomScreen: React.FC = ({ route }:any) => {
     const navigation = useNavigation<NativeStackNavigationProp<HomeStackParams>>();
@@ -27,17 +28,13 @@ export const QuizroomScreen: React.FC = ({ route }:any) => {
     const [secondsToAnswer, setSecondsToAnswer] = useState(0)
     const [quizStarted, setQuizStarted] = useState(false)
     const [participants, setParticipants] = useState([])
-    const catAvatar = require('../../assets/img/illustration/catAvatar.jpg');
 
     const [resolveAnswers, setResolveAnswers] = useState(false)
-    const [questionResolve, setQuestionResolve] = useState(false)
 
     const [leaderBoard, setLeaderBoard] = useState<LeaderBoardType[]>([])
 
     const [questionResolveMessage, setQuestionResolveMessage] = useState(false)
     const [questionResolveMessageWrong, setQuestionResolveMessageWrong] = useState(false)
-    const cancelRef = useRef(null);
-
 
     const [modalOpen, setModalOpen] = useState(false)
 
@@ -56,7 +53,7 @@ export const QuizroomScreen: React.FC = ({ route }:any) => {
             setSecondsToAnswer(quizData?.questions[questionIndex]?.secondsToAnswer)
             // emitter
             
-            socket.emit("joinRoom", {quizId: quizId, userId: user?.matrikelnummer})
+            socket.emit("joinRoom", {quizId: quizId, userId: user?.id})
 
             // listener
             socket.on('changedPage', (data)=> {
@@ -87,36 +84,29 @@ export const QuizroomScreen: React.FC = ({ route }:any) => {
                 setLeaderBoard(data.leaderBoard)
                 
                 setTimeout(() => {
-
                     //Check ob man unten den Usern ist die Richtig waren
                     data.correctUsers?.map(correctUser => {
-                        if(correctUser == user.matrikelnummer){
+                        if(correctUser == user.id){
                             setQuestionResolveMessage(true)
 
                             setTimeout(() => {
                                 setQuestionResolveMessage(false)
-                            }, 5000)
+                            }, 4500)
                         }
                     })
 
                     //Check ob man unten den Usern ist die Falsch waren
                     data.wrongUsers?.map(wrongUser => {
-                        if(wrongUser == user.matrikelnummer){
+                        if(wrongUser == user.id){
                             console.log("Schade! Du hast die Frage falsch beantwortet :(")
                             setQuestionResolveMessageWrong(true)
 
                             setTimeout(() => {
                                 setQuestionResolveMessageWrong(false)
-                            }, 5000)
+                            }, 4500)
                         }
                     })
-                }, 5000)
-
-
-                setTimeout(() => {
-                    setQuestionResolve(true)
-                }, 5000)
-             
+                }, 0)             
             })
 
             socket.on('joinedRoom', (data) => {
@@ -137,7 +127,7 @@ export const QuizroomScreen: React.FC = ({ route }:any) => {
           // Wenn Seite geschlossen wird - alle listener aus
           socket.off('changedPage');
           socket.off('joinedRoom')
-          socket.emit("leaveRoom",{quizId: quizId, userId: user?.matrikelnummer})
+          socket.emit("leaveRoom",{quizId: quizId, userId: user?.id})
         };
         
     },[])
@@ -146,10 +136,10 @@ export const QuizroomScreen: React.FC = ({ route }:any) => {
         //Check ob App im vordergrund ist oder nicht
         const subscription = AppState.addEventListener("change", nextAppState => {
           if ( appState.current.match(/inactive|background/) && nextAppState === "active") {
-            socket.emit("joinRoom", {quizId: quizId, userId: user?.matrikelnummer}) //User ist wieder in der App
+            socket.emit("joinRoom", {quizId: quizId, userId: user?.id}) //User ist wieder in der App
             getQuizDataAndRefreshState()
           }else{
-            socket.emit("leaveRoom",{quizId: quizId, userId: user?.matrikelnummer}) //User verlässt App
+            socket.emit("leaveRoom",{quizId: quizId, userId: user?.id}) //User verlässt App
           }
 
           appState.current = nextAppState;
@@ -173,7 +163,7 @@ export const QuizroomScreen: React.FC = ({ route }:any) => {
 
     const sendAnswerToServer = ((option: OptionType) => {
         setOptionVergleich(option.index)
-        socket.emit('giveAnswer', {quizId: quizId, userId: user?.matrikelnummer, questionIndex , option})
+        socket.emit('giveAnswer', {quizId: quizId, userId: user?.id, questionIndex , option})
     })
 
     const getLetter = (num: number) => {
@@ -300,10 +290,7 @@ export const QuizroomScreen: React.FC = ({ route }:any) => {
                         <HStack style={{flexWrap: 'wrap',}}>                  
                             {participants.map((participant,i)=> {                 
                                 return (
-                                    <Box key={i} style={{marginRight:5, width:80, justifyContent:'center', alignItems:'center'}}>
-                                        <Avatar bg="green.500" source={catAvatar}></Avatar>
-                                        <Text color={'black'}>{participant}</Text>
-                                    </Box>
+                                    <UserAvatar key={i} userId={participant}/>
                                 )
                             })}
                         </HStack>
@@ -315,7 +302,7 @@ export const QuizroomScreen: React.FC = ({ route }:any) => {
                 <LottieView source={require('../../assets/animations/coinAnimation.json')} autoPlay loop speed={0.5} />
                 <Box marginTop={40} backgroundColor={'gray.300'} borderRadius={10} padding={2}>
                     <Text fontSize={16} color={'black'} bold>Hurra! Du hast die Frage richtig beantwortet!</Text>
-                    <Text fontSize={16} color={'black'} bold>Du erhälst 25 Punkte</Text>
+                    <Text fontSize={16} color={'black'} bold>Du erhälst 10 Punkte</Text>
                 </Box>
             </Modal>
 

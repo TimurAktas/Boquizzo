@@ -7,7 +7,6 @@ import { ActiveQuizCard } from '../../components/ActiveQuizCard/ActiveQuizCard';
 import { HomeStackParams } from '../../navigation/HomeStackNavigation/HomeStackNavigation';
 import { AppDispatch, RootState } from '../../redux/store';
 import { getUserWithAccessToken } from '../../redux/user/user.action';
-import {StatusBar} from 'react-native';
 
 export const HomeScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<HomeStackParams>>();
@@ -25,7 +24,7 @@ export const HomeScreen: React.FC = () => {
             <Box h={40} w={'100%'} backgroundColor={'red.700'} borderBottomRadius={30}>
                 <HStack marginTop={10} padding={4} justifyContent={'space-between'}>
                     <HStack>
-                        <Avatar bg="green.500" source={{ uri: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80"}}>
+                        <Avatar bg="green.500" source={{ uri: "https://images.unsplash.com/photo-1510771463146-e89e6e86560e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=627&q=80"}}>
                             AJ
                         </Avatar>
 
@@ -55,14 +54,21 @@ export const HomeScreen: React.FC = () => {
                         <Box /*TrennWand*/ h={.4} w={'90%'} backgroundColor={'gray.300'} marginLeft={'auto'} marginRight={'auto'} marginTop={4}></Box>
 
                         <Box w={'90%'} marginLeft={'auto'} marginRight={'auto'}>
+
                             <HStack justifyContent={'space-between'} marginTop={4}>
-                                <Text color={'gray.700'} fontSize={16}>Name</Text>
-                                <Text color={'gray.700'} fontSize={16} bold>{user?.name} {user?.surname}</Text>
+                                <Text color={'gray.700'} fontSize={16}>Nickname</Text>
+                                <Text color={'gray.700'} fontSize={16} bold>{user?.nickname}</Text>
+                            </HStack> 
+
+
+                            <HStack justifyContent={'space-between'} marginTop={4}>
+                                <Text color={'gray.700'} fontSize={16}>ID</Text>
+                                <Text color={'gray.700'} fontSize={16} bold>{user?.id}</Text>
                             </HStack> 
 
                             <HStack justifyContent={'space-between'} marginTop={4}>
-                                <Text color={'gray.700'} fontSize={16}>Matrikelnummer</Text>
-                                <Text color={'gray.700'} fontSize={16} bold>{user?.matrikelnummer}</Text>
+                                <Text color={'gray.700'} fontSize={16}>Name</Text>
+                                <Text color={'gray.700'} fontSize={16} bold>{user?.name} {user?.surname}</Text>
                             </HStack> 
 
                             <HStack justifyContent={'space-between'} marginTop={4}>

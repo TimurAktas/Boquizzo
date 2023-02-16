@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { getUserWithAccessToken } from './user.action';
+import { createNewUser, getUserWithAccessToken } from './user.action';
 import { UserState } from './user.types';
 
 const initialState: UserState = {
@@ -15,6 +15,9 @@ export const userSlice = createSlice({
     extraReducers: (builder) => {
         builder.addCase(getUserWithAccessToken.fulfilled, (state, action) => {
             state.data = action.payload;
+        });
+        builder.addCase(createNewUser.fulfilled, (state, action) => {
+            console.log("erstlle neuen Nutzer")
         });
     },
 });
