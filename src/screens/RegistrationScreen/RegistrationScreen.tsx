@@ -3,6 +3,7 @@ import { Box, Input, Pressable,Text,Image, ScrollView, HStack, ChevronLeftIcon }
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useDispatch } from 'react-redux';
+import { Errorbar } from '../../components/Errorbar/Errorbar';
 import { AppDispatch } from '../../redux/store';
 import { createNewUser } from '../../redux/user/user.action';
 
@@ -10,18 +11,57 @@ export const RegistrationScreen: React.FC = () => {
     // ID wird generiert
     const [nickname, setNickname] = useState('')
     const [password, setPassword] = useState('')
+    const [passwordChecker, setPasswordChecker] = useState('')
     const [name, setName ] = useState('')
     const [surname, setSurname ] = useState('')
     const [uni, setUni ] = useState('')
     const [semester, setSemester ] = useState(null)
+
+    const [nicknameError, setNicknameError] = useState('')
+    const [passwordError, setPasswordError] = useState('')
+    const [passwordCheckerError, setPasswordCheckerError] = useState('')
+    const [nameError, setNameError ] = useState('')
+    const [surnameError, setSurnameError ] = useState('')
+    const [uniError, setUniError ] = useState('')
+    const [semesterError, setSemesterError ] = useState('')
 
     const dispatch: AppDispatch = useDispatch();
 
     const navigation = useNavigation();
 
     const createNewUserr = async () => {
-        await dispatch(createNewUser({nickname: nickname, password: password, name:name, surname:surname, uni:uni, semester:semester}))
-            .then(() => navigation.goBack())
+        console.log(passwordChecker)
+        console.log("err",passwordCheckerError)
+
+        if(!nickname)setNicknameError('Gib einen Nicknamen ein!')
+        else setNicknameError('')
+
+        if(!password)setPasswordError('Gib ein Passwort ein!')
+        else setPasswordError('')
+
+        if(!passwordChecker)setPasswordCheckerError('Gib nochmal das selbe Passwort zum überprüfen ein!')
+        else setPasswordCheckerError('')
+
+        if(!name)setNameError('Du musst deinen Vornamen eintragen!')
+        else setNameError('')
+
+        if(!surname)setSurnameError('Du musst deinen Nachnamen eintragen!')
+        else setSurnameError('')
+
+        if(!uni)setUniError('Du musst deine Hochschule/Uni eintragen!')
+        else setUniError('')
+
+        if(!semester)setSemesterError('Gib ein in welchem Semester du bist!')
+        else setSemesterError('')
+
+        if(password && passwordChecker && password !== passwordChecker){
+            setPasswordCheckerError('Deine Passwörter stimmen nicht überein!')
+        }else  setPasswordCheckerError('')
+
+        if(nickname && password && (password == passwordChecker) && name && surname && uni && semester){
+            await dispatch(createNewUser({nickname: nickname, password: password, name:name, surname:surname, uni:uni, semester:semester}))
+                .then(() => navigation.goBack())
+        }
     } 
 
     return (
@@ -47,11 +87,19 @@ export const RegistrationScreen: React.FC = () => {
                 <Box marginTop={10} w={'90%'} alignSelf={'center'} backgroundColor="white" borderRadius={10} paddingLeft={4} paddingBottom={10} paddingRight={4}>
                     <Input borderRadius={10} borderWidth={.3} size={'xl'} marginTop={8} placeholder="Nickname" w="100%" onChangeText={e => setNickname(e)} color={'black'}/>
                     <Text color={'black'} marginTop={2} fontSize={14}>Wichtig: Nickname wird zum einloggen genutzt</Text>
+                    <Errorbar errorMessage={nicknameError} />
                     <Input borderRadius={10} borderWidth={.3} size={'xl'} secureTextEntry={true} marginTop={4} placeholder="Passwort" w="100%" onChangeText={e => setPassword(e)} color={'black'}/>
+                    <Errorbar errorMessage={passwordError} />
+                    <Input borderRadius={10} borderWidth={.3} size={'xl'} secureTextEntry={true} marginTop={8} placeholder="Passwort wiederholen" w="100%" onChangeText={e => setPasswordChecker(e)} color={'black'}/>
+                    <Errorbar errorMessage={passwordCheckerError} />
                     <Input borderRadius={10} borderWidth={.3} size={'xl'} marginTop={8} placeholder="Name" w="100%" onChangeText={e => setName(e)} color={'black'}/>
+                    <Errorbar errorMessage={nameError} />
                     <Input borderRadius={10} borderWidth={.3} size={'xl'} marginTop={8} placeholder="Nachname" w="100%" onChangeText={e => setSurname(e)} color={'black'}/>
+                    <Errorbar errorMessage={surnameError} />
                     <Input borderRadius={10} borderWidth={.3} size={'xl'} marginTop={8} placeholder="Uni/Hochschule" w="100%" onChangeText={e => setUni(e)} color={'black'}/>
+                    <Errorbar errorMessage={uniError} />
                     <Input borderRadius={10} borderWidth={.3} size={'xl'} keyboardType={'numeric'} marginTop={8} placeholder="Semester" w="100%" onChangeText={e => setSemester(e)} color={'black'}/>
+                    <Errorbar errorMessage={semesterError} />
 
                     <Pressable alignSelf={'center'} w={'90%'} marginTop={10} onPress={createNewUserr}> 
                     {({ isHovered, isFocused, isPressed}) => { 

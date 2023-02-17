@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { HomeStackParams } from '../../navigation/HomeStackNavigation/HomeStackNavigation';
 import { getQuizData } from '../../redux/quiz/quiz.action';
 import { AppDispatch, RootState } from '../../redux/store';
+import { GetUserNickname } from '../../utils/utils';
 
 export const HallOfFameScreen: React.FC = ({ route }:any) => {
     const quizId: string =  route.params.quizId
@@ -59,26 +60,26 @@ export const HallOfFameScreen: React.FC = ({ route }:any) => {
                          if(index == 0){
                             return <HStack alignItems={'center'} justifyContent={'space-between'}>
                                 <Image source={first} alt={'stImg'} height={16} width={16} marginTop={4} />
-                                <Text color={'black'} fontSize={18} bold>{user.userId}</Text>
+                                <GetUserNickname userId={user.userId} />
                                 <Text color={'black'} fontSize={18} bold>{user.points} Punkte</Text>
                             </HStack>
                         }else if(index == 1){
                             return <HStack justifyContent={'space-between'} alignItems={'center'}>
                                 <Image source={second} alt={'ndImg'} height={16} width={16} marginTop={4} />
-                                <Text color={'black'} fontSize={18} bold>{user.userId}</Text>
+                                <GetUserNickname userId={user.userId} />
                                 <Text color={'black'} fontSize={18} bold>{user.points} Punkte</Text>
                             </HStack>
                         }else{
                             return <HStack justifyContent={'space-between'} alignItems={'center'}>
                                 <Image source={third} alt={'rdImg'} height={16} width={16} marginTop={4} />
-                                <Text color={'black'} fontSize={18} bold>{user.userId}</Text>
+                                <GetUserNickname userId={user.userId} />
                                 <Text color={'black'} fontSize={18} bold>{user.points} Punkte</Text>
                             </HStack>
                         }
                     }else{
                         return <HStack justifyContent={'space-between'} alignItems={'center'} marginTop={4}>
                             <Text color={'black'} marginLeft={6}>{index+1}. </Text>
-                            <Text color={'black'} fontSize={18}>{user.userId}</Text>
+                            <GetUserNickname userId={user.userId} />
                             <Text color={'black'} fontSize={18}>{user.points} Punkte</Text>
                         </HStack>
                     }
