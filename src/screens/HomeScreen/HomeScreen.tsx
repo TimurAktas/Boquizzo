@@ -7,14 +7,14 @@ import { ActiveQuizCard } from '../../components/ActiveQuizCard/ActiveQuizCard';
 import { HomeStackParams } from '../../navigation/HomeStackNavigation/HomeStackNavigation';
 import { AppDispatch, RootState } from '../../redux/store';
 import { getUserWithAccessToken } from '../../redux/user/user.action';
-
+const catAvatar = require('../../assets/img/illustration/catAvatar.jpg');
 export const HomeScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<HomeStackParams>>();
     const hsboLogo = require('../../assets/img/hsbologo.png');
     const dispatch: AppDispatch = useDispatch();
     const user = useSelector((state: RootState) => state.user.data);
     const quizData = useSelector((state: RootState) => state.quiz.data);
-
+    const professor = require('../../assets/professor.png');
     useEffect(() => {
         dispatch(getUserWithAccessToken())
     },[])
@@ -24,12 +24,12 @@ export const HomeScreen: React.FC = () => {
             <Box h={40} w={'100%'} backgroundColor={'red.700'} borderBottomRadius={30}>
                 <HStack marginTop={10} padding={4} justifyContent={'space-between'}>
                     <HStack>
-                        <Avatar bg="green.500" source={{ uri: "https://images.unsplash.com/photo-1510771463146-e89e6e86560e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=627&q=80"}}>
+                        <Avatar bg="green.500" source={catAvatar}>
                             AJ
                         </Avatar>
 
                         <Box marginLeft={4}>
-                            <Text fontSize={16}>Guten Tag  <FavouriteIcon color="white"/></Text> 
+                            <Text fontSize={16}>Guten Tag !</Text> 
                             <Text color={'white'} fontSize={16} bold>{user?.name} {user?.surname}</Text>
                         </Box>
                     </HStack>
@@ -60,6 +60,13 @@ export const HomeScreen: React.FC = () => {
                                 <Text color={'gray.700'} fontSize={16} bold>{user?.nickname}</Text>
                             </HStack> 
 
+                            <HStack justifyContent={'space-between'} marginTop={4}>
+                                <Text color={'gray.700'} fontSize={16}>Rang</Text>
+                                <HStack>
+                                    <Text color={'gray.700'} fontSize={16} bold>BO-Quizzo Challenger </Text>
+                                    <Image source={professor} alt={'rdImg'} height={6} width={6} backgroundColor={'gray.100'} />
+                                </HStack>
+                            </HStack> 
 
                             <HStack justifyContent={'space-between'} marginTop={4}>
                                 <Text color={'gray.700'} fontSize={16}>ID</Text>

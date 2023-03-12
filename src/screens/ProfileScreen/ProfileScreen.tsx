@@ -1,18 +1,17 @@
-import { Box, HStack, Stack, VStack,Text, ScrollView, FavouriteIcon, InfoIcon, Pressable} from 'native-base';
+import { Box, Pressable, Text, Image, HStack, ScrollView, Avatar, VStack} from 'native-base';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Avatar } from "native-base";
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { QuizType } from '../../redux/quiz/quiz.types';
 import { QuizCard } from '../../components/QuizCard/QuizCard';
 import { logoutUser } from '../../redux/auth/auth.action';
 import { API_URL } from '../../config/config';
-
+const catAvatar = require('../../assets/img/illustration/catAvatar.jpg');
 export const ProfileScreen: React.FC = () => {
     const user = useSelector((state: RootState) => state.user.data);
     const dispatch: AppDispatch = useDispatch();
-    
+    const professor = require('../../assets/professor.png');
     const [allQuizzes, setAllQuizzes] = useState<QuizType[]>()
 
     useEffect(() => {
@@ -42,9 +41,9 @@ export const ProfileScreen: React.FC = () => {
     return (
         <Box style={style.viewStyle} backgroundColor="primary.50">
             <Box h={40} w={'100%'} backgroundColor={'red.700'} borderBottomRadius={30}>
-                <HStack marginTop={16} padding={4} justifyContent={'space-between'}>
+                <HStack marginTop={10} padding={4} justifyContent={'space-between'}>
                     <HStack>
-                        <Avatar bg="green.500" source={{ uri: "https://images.unsplash.com/photo-1510771463146-e89e6e86560e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=627&q=80"}}>
+                        <Avatar bg="green.500" source={catAvatar}>
                             AJ
                         </Avatar>
 
@@ -56,9 +55,17 @@ export const ProfileScreen: React.FC = () => {
                     
                     <VStack>
                         <Text color={'white'} fontSize={16} bold>Quizpunkte</Text>
-                        <Text color={'white'} fontSize={16} alignSelf={'center'}>{user?.quizPoints}</Text>
+                        <Text color={'white'} fontSize={16} alignSelf={'center'}>{user?.quizPoints}000</Text>
                     </VStack>
                 </HStack>
+
+                <HStack justifyContent={'space-between'} width={200} alignSelf={'center'} marginLeft={-10}> 
+                        <Text fontSize={16}>Rang: </Text>
+                        <HStack>
+                            <Text fontSize={16} bold>BO-Quizzo Challenger </Text>
+                            <Image source={professor} alt={'rdImg'} height={6} width={6} backgroundColor={'gray.100'} />
+                        </HStack>
+                    </HStack> 
             </Box>
 
             <Pressable alignSelf={'center'} w={'90%'} marginTop={10} onPress={logout}> 

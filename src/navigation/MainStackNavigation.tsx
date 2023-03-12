@@ -10,6 +10,9 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { createStackNavigator } from '@react-navigation/stack';
 import { RegistrationScreen } from '../screens/RegistrationScreen/RegistrationScreen';
+import Svg, { Path, SvgUri } from 'react-native-svg';
+
+const homeIcon = require('../assets/icons/home-2-svgrepo-com.svg');
 
 export type BottomTabParams = {
     Home: HomeStackParams;
@@ -36,20 +39,52 @@ export const MainStackNavigation: React.FC = () => {
                         name="Home"
                         component={HomeScreenStack}
                         options={{
+                            tabBarActiveTintColor:'#aa2e31',
                             headerShown: false,
-                            tabBarIcon: ({ color }) => (
-                                <AddIcon size="5" mt="0.5" color="black" />
-                            ),
+                            tabBarIcon: ({ focused }) => {
+                                return (
+                                    focused ? 
+                                    <SvgUri
+                                        width="100%"
+                                        height="80%"
+                                        fill="#aa2e31"
+                                        fillOpacity={0.3}
+                                        uri='/Users/timur.aktas-gonzalez/Bachelorarbeit/Boquizzo/src/assets/icons/home-2-svgrepo-com.svg'
+                                    />
+                                   :
+                                    <SvgUri
+                                        width="100%"
+                                        height="80%"
+                                        uri='/Users/timur.aktas-gonzalez/Bachelorarbeit/Boquizzo/src/assets/icons/home-2-svgrepo-com.svg'
+                                    />
+                                );
+                            }
                         }} 
                     />
                     <BottomTab.Screen
                         name="Profile"
                         component={ProfileScreen}
                         options={{
+                            tabBarActiveTintColor:'#aa2e31',
                             headerShown: false,
-                            tabBarIcon: ({ color }) => (
-                                <AddIcon size="5" mt="0.5" color="black" />
-                            ),
+                            tabBarIcon: ({ focused }) => {
+                                return (
+                                    focused ? 
+                                    <SvgUri
+                                        width="100%"
+                                        height="80%"
+                                        fill="#aa2e31"
+                                        fillOpacity={0.3}
+                                        uri='/Users/timur.aktas-gonzalez/Bachelorarbeit/Boquizzo/src/assets/icons/profile-circle-svgrepo-com.svg'
+                                    />
+                                   :
+                                    <SvgUri
+                                        width="100%"
+                                        height="80%"
+                                        uri='/Users/timur.aktas-gonzalez/Bachelorarbeit/Boquizzo/src/assets/icons/profile-circle-svgrepo-com.svg'
+                                    />
+                                );
+                            }
                         }} 
                         
                     />
